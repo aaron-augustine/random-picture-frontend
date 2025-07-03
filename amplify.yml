@@ -1,0 +1,22 @@
+version: 1
+frontend:
+    phases:
+        preBuild:
+            commands:
+                - 'printf "//registry.npmjs.org/:_authToken=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" >> ~/.npmrc'
+                - export NPM_CONFIG_PRODUCTION=false
+                - npm ci
+                - npm ls --depth=1
+        build:
+            commands:
+                - 'pwd'
+                - 'ls node_modules'
+                - 'ls node_modules/@grafana/faro-webpack-plugin'
+                - 'npm run build'
+    artifacts:
+        baseDirectory: build
+        files:
+            - '**/*'
+    cache:
+        paths:
+            - '.npm/**/*'
