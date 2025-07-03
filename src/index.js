@@ -1,5 +1,5 @@
 // Initialize Faro before any other code
-//import { initFaroWithTracing } from '@michelin/faro-react-initialization-utils/withTracing';
+import { initFaroWithTracing } from '@michelin/faro-react-initialization-utils/withTracing';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
