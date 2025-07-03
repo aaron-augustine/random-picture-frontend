@@ -12,8 +12,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^5.3.4",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4",
-    "@grafana/faro-webpack-plugin": "^0.5.1"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -40,6 +39,7 @@
     ]
   },
   "devDependencies": {
+    "@grafana/faro-webpack-plugin": "^0.5.1",
     "@grafana/faro-cli": "^0.4.1",
     "react-app-rewired": "^2.2.1"
   }

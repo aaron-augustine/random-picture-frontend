@@ -3,15 +3,14 @@ frontend:
     phases:
         preBuild:
             commands:
-                - 'printf "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc'
-                - export NPM_CONFIG_PRODUCTION=false
-                - npm ci
-                - npm ls --depth=1
+                - 'npm install -g npm@10'
+                - 'npm cache clean --force'
+                - 'rm -rf node_modules'
+                - 'rm package-lock.json'
+                - 'npm config set //registry.npmjs.org/:_authToken=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'
+                - 'npm install'
         build:
             commands:
-                - 'pwd'
-                - 'ls node_modules'
-                - 'ls node_modules/@grafana/faro-webpack-plugin'
                 - 'npm run build'
     artifacts:
         baseDirectory: build
