@@ -3,7 +3,7 @@ frontend:
     phases:
         preBuild:
             commands:
-                - 'printf "//registry.npmjs.org/:_authToken=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" >> ~/.npmrc'
+                - 'printf "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc'
                 - export NPM_CONFIG_PRODUCTION=false
                 - npm ci
                 - npm ls --depth=1
