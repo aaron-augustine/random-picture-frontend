@@ -7,11 +7,11 @@ frontend:
                 - npm cache clean --force
                 - rm -rf node_modules
                 - rm package-lock.json
-                - npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+                - 'npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN'
                 - npm install
         build:
             commands:
-                - 'npm run build'
+                - npm run build
     artifacts:
         baseDirectory: build
         files:
