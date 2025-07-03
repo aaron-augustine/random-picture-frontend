@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@michelin/faro-react-initialization-utils": "1.0.7",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^13.4.0",
@@ -13,7 +12,7 @@
     "react-router-dom": "^5.3.4",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4",
-    "@grafana/faro-webpack-plugin": "0.5.1"
+    "@grafana/faro-webpack-plugin": "^0.5.1"
   },
   "scripts": {
     "start": "react-app-rewired start",

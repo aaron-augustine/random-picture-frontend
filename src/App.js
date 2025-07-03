@@ -164,11 +164,13 @@ function App() {
   const [userName, setUserName] = useState(() => localStorage.getItem('userName') || '');
   const [showNamePrompt, setShowNamePrompt] = useState(!userName);
 
+  /*
   useEffect(() => {
     if (userName && faro) {
       faro.api.setUser({ id: userName, username: userName });
     }
   }, [userName]);
+  */
 
   const handleNameSubmit = (e) => {
     e.preventDefault();
