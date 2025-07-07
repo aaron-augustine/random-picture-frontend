@@ -7,8 +7,13 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-// Get the backend URL from environment variable
-const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+// Pull API and image processor base URLs from env vars
+const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+const imageProcessorUrl = process.env.REACT_APP_IMAGE_PROCESSOR_URL || 'http://localhost:3002';
+const backendUrls = [
+  new RegExp(`^${apiUrl}.*`),
+  new RegExp(`^${imageProcessorUrl}.*`)
+];
 
 initFaroWithTracing(
   {
@@ -16,7 +21,7 @@ initFaroWithTracing(
     name: 'Random-Picture-Frontend',
     version: '1.0.0',
     env: 'production',
-    backendUrls: [new RegExp('http://localhost/*'), new RegExp('https://localhost/*'), new RegExp('https://qwusxh1qo1.execute-api.us-east-2.amazonaws.com/default/*')],
+    backendUrls, // use dynamic list
   },
   {
     trackGeolocation: true, // Enable geolocation tracking
