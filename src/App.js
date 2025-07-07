@@ -30,6 +30,7 @@ function App() {
   // API URLs
   const IMAGE_PROCESSOR_URL = process.env.REACT_APP_IMAGE_PROCESSOR_URL || 'http://localhost:3002';
   const BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+  const API_KEY = process.env.REACT_APP_API_KEY || 'default-api-key';
 
   const processImage = async (appliedFilters = filters, forceNewImage = false, imageOverride = null) => {
     let localError = null;
@@ -122,7 +123,13 @@ function App() {
 
   const testBackendEndpoint = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/hello`);
+      const response = await fetch(`${BACKEND_URL}/hello`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY
+        }
+      });
       const data = await response.json();
       alert(`Backend hello: ${data.message}`);
     } catch (err) {
