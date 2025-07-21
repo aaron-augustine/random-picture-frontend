@@ -131,11 +131,11 @@ frontend/
 For convenience, an `.env.example` file is provided with all required and optional environment variables. Copy this to create your `.env` file in the frontend directory:
 
 ```bash
-# Image Processor Service URL
+# Image Processor Service URL (required)
 REACT_APP_IMAGE_PROCESSOR_URL=http://localhost:3002
 
-# Picture Server URL (for direct access if needed)
-REACT_APP_PICTURE_SERVER_URL=http://localhost:3001
+# Picture Server URL (for direct testing)
+REACT_APP_API_URL=http://localhost:3001
 
 # Development settings
 REACT_APP_NODE_ENV=development
@@ -514,23 +514,3 @@ const fetchWithTracing = async (url, options = {}) => {
 - **Image Processor**: [../image-processor/README.md](../image-processor/README.md)
 - **Picture Server**: [../picture-server/README.md](../picture-server/README.md)
 - **Full Stack Documentation**: [../README.md](../README.md)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
