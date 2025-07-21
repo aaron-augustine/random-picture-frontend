@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@michelin/faro-react-initialization-utils": "1.0.7",
+    "@grafana/faro-react": "^1.19.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "history": "^4.10.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^5.3.4",
@@ -39,8 +40,8 @@
     ]
   },
   "devDependencies": {
-    "@grafana/faro-webpack-plugin": "^0.5.1",
     "@grafana/faro-cli": "^0.4.1",
+    "@grafana/faro-webpack-plugin": "^0.5.1",
     "react-app-rewired": "^2.2.1"
   }
 }

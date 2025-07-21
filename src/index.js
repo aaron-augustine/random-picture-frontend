@@ -1,6 +1,15 @@
-// Initialize Faro before any other code
-import { initFaroWithTracing } from '@michelin/faro-react-initialization-utils/withTracing';
-
+// dotenv is not needed in the frontend; use CRA environment injection instead
+import { Route } from 'react-router-dom';
+import {
+  // or createReactRouterV4Options
+  createReactRouterV5Options,
+  getWebInstrumentations,
+  initializeFaro,
+  ReactIntegration,
+  ReactRouterVersion,
+} from '@grafana/faro-react';
+import { TracingInstrumentation } from '@grafana/faro-web-tracing';
+import { createBrowserHistory } from 'history';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -15,19 +24,36 @@ const backendUrls = [
   new RegExp(`^${imageProcessorUrl}.*`)
 ];
 
-initFaroWithTracing(
-  {
-    url: process.env.REACT_APP_FARO_URL, // Faro URL for sending telemetry data
-    name: 'Random-Picture-Frontend',
-    version: '1.0.0',
-    env: 'production',
-    backendUrls, // use dynamic list
+initializeFaro({
+  url: process.env.REACT_APP_FARO_URL || 'https://faro.grafana.net/api/collect/v1',
+  app: {
+    name: 'random-picture-frontend',
+    version: process.env.REACT_APP_VERSION || '1.0.0',
+    environment: process.env.REACT_APP_ENV || 'development',
   },
-  {
-    trackGeolocation: true, // Enable geolocation tracking
-    trackUserActionsPreview: true, // Enable user actions tracking
-  }
-);
+  instrumentations: [
+    ...getWebInstrumentations({
+      backendUrls,
+      // Enable React Router v5 support
+      reactRouterVersion: ReactRouterVersion.V5,
+    }),
+    new ReactIntegration({
+      // Enable React Router v5 support
+      router: createReactRouterV5Options({
+        history: createBrowserHistory(),
+        Route,
+      }),
+    }),
+    new TracingInstrumentation({
+      instrumentationOptions: {
+        // Requests to these URLs have tracing headers attached.
+        propagateTraceHeaderCorsUrls: [new RegExp('http://localhost*')],
+      },
+    }),
+  ],
+  trackGeolocation: true,
+  trackUserActionsPreview: true,
+})
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
