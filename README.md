@@ -108,15 +108,49 @@ frontend/
 For convenience, an `.env.example` file is provided with all required and optional environment variables. Copy this to create your `.env` file in the frontend directory:
 
 ```bash
-# Image Processor Service URL
+# Image Processor Service URL (required for image processing functionality)
 REACT_APP_IMAGE_PROCESSOR_URL=http://localhost:3002
 
-# Picture Server URL (for direct access if needed)
-REACT_APP_PICTURE_SERVER_URL=http://localhost:3001
+# Picture Server endpoint (for direct testing - usually accessed through image processor)
+REACT_APP_API_URL=http://localhost:3001
 
-# Development settings
-REACT_APP_NODE_ENV=development
+# Application environment
+REACT_APP_ENV=development
+REACT_APP_VERSION=1.0.0
+
+# Observability & Telemetry (Grafana Faro) - Optional
+# REACT_APP_FARO_URL=https://faro.grafana.net/api/collect/v1
+# REACT_APP_FARO_API_KEY=your_faro_api_key_here
+
+# Source map generation for debugging
+GENERATE_SOURCEMAP=true
+
+# Development settings (not recommended for production)
+NODE_TLS_REJECT_UNAUTHORIZED=0
 ```
+
+### Production Observability (Grafana Faro)
+
+This application includes production-ready observability with Grafana Faro integration:
+
+**Faro Configuration:**
+- **App ID**: 414
+- **Stack ID**: 1273903  
+- **Endpoint**: https://faro-api-prod-us-east-2.grafana.net/faro/api/v1
+
+**Source Map Upload:**
+The build process automatically uploads source maps to Grafana Faro for production builds:
+```bash
+# Automatic upload during production build (requires FARO_API_KEY)
+npm run build
+
+# Manual source map upload
+./faro_sourcemap_upload.sh
+```
+
+**Required Environment Variables for Production:**
+- `FARO_API_KEY`: Grafana Faro API key for source map uploads
+- `FARO_BUNDLE_ID_RANDOM_PICTURE_FRONTEND`: Bundle identifier (stored in `.env.RANDOM_PICTURE_FRONTEND`)
 
 ### Available Scripts
 
@@ -162,21 +196,34 @@ const applyFilters = async (newFilters) => {
 
 ### Service Communication
 
-The frontend communicates exclusively with the image processor:
+The frontend communicates with both the image processor and picture server:
 
 ```javascript
-// Fetch available filters
-const getFilters = async () => {
-  const response = await fetch('http://localhost:3002/filters');
+// Process image with filters (primary workflow)
+const processImage = async (appliedFilters) => {
+  const response = await fetch(`${IMAGE_PROCESSOR_URL}/process`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-API-Key': API_KEY
+    },
+    body: JSON.stringify({ filters: appliedFilters })
+  });
   return response.json();
 };
 
-// Process image with filters
-const processImage = async (filters) => {
-  const response = await fetch('http://localhost:3002/process', {
+// Get new image from picture server (via image processor)
+const fetchNewImage = async () => {
+  const response = await fetch(`${IMAGE_PROCESSOR_URL}/process`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ filters })
+    headers: {
+      'Content-Type': 'application/json',
+      'X-API-Key': API_KEY
+    },
+    body: JSON.stringify({ 
+      filters: { preset: '' }, 
+      forceNewImage: true 
+    })
   });
   return response.json();
 };
@@ -187,30 +234,25 @@ const processImage = async (filters) => {
 The frontend includes a built-in service health monitoring dashboard:
 
 ```javascript
-// Service health check
-const checkServiceHealth = async () => {
-  const services = [
-    {name: 'Image Processor', url: `${process.env.REACT_APP_IMAGE_PROCESSOR_URL}/health`},
-    {name: 'Picture Server', url: `${process.env.REACT_APP_PICTURE_SERVER_URL}/hello`}
-  ];
-  
-  const results = await Promise.all(
-    services.map(async (service) => {
-      try {
-        const response = await fetch(service.url);
-        const data = await response.json();
-        return { 
-          name: service.name, 
-          status: response.ok ? 'online' : 'error',
-          details: data 
-        };
-      } catch (error) {
-        return { name: service.name, status: 'offline', error: error.message };
-      }
-    })
-  );
-  
-  return results;
+// Service health check implementation
+const checkImageProcessorHealth = async () => {
+  try {
+    const response = await fetch(`${IMAGE_PROCESSOR_URL}/health`);
+    return { status: response.ok ? 'healthy' : 'error', response: await response.json() };
+  } catch (error) {
+    return { status: 'offline', error: error.message };
+  }
+};
+
+const checkPictureServerHealth = async () => {
+  try {
+    const response = await fetch(`${BACKEND_URL}/hello`, {
+      headers: { 'X-API-Key': API_KEY }
+    });
+    return { status: response.ok ? 'healthy' : 'error', response: await response.json() };
+  } catch (error) {
+    return { status: 'offline', error: error.message };
+  }
 };
 ```
 
@@ -356,16 +398,18 @@ test('applies filter to image', async () => {
 
 **Service Discovery:**
 ```javascript
-// Environment-based URLs
+// Environment-based URLs with fallbacks
 const IMAGE_PROCESSOR_URL = process.env.REACT_APP_IMAGE_PROCESSOR_URL || 'http://localhost:3002';
+const BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+const API_KEY = process.env.REACT_APP_API_KEY || 'default-api-key';
 
-// Health check all services
-const checkServiceHealth = async () => {
+// Health check implementation
+const checkImageProcessorHealth = async () => {
   try {
-    const imageProcessorHealth = await fetch(`${IMAGE_PROCESSOR_URL}/health`);
-    return { imageProcessor: imageProcessorHealth.ok };
+    const response = await fetch(`${IMAGE_PROCESSOR_URL}/health`);
+    return { healthy: response.ok, data: await response.json() };
   } catch (error) {
-    return { imageProcessor: false };
+    return { healthy: false, error: error.message };
   }
 };
 ```
