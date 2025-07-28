@@ -1,6 +1,6 @@
 // Initialize Faro before any other code
 import { initFaroWithTracing } from '@michelin/faro-react-initialization-utils/withTracing';
-
+import { Route } from 'react-router-dom';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -17,11 +17,12 @@ const backendUrls = [
 
 initFaroWithTracing(
   {
-    url: process.env.REACT_APP_FARO_URL, // Faro URL for sending telemetry data
-    name: 'Random-Picture-Frontend',
-    version: '1.0.0',
-    env: 'production',
+    endpointUrl: process.env.REACT_APP_FARO_URL, // Faro URL for sending telemetry data
+    serviceName: 'Random-Picture-Frontend',
+    serviceVersion: '1.0.0',
+    serviceEnv: 'production',
     backendUrls, // use dynamic list
+    Route: Route,
   },
   {
     trackGeolocation: true, // Enable geolocation tracking
